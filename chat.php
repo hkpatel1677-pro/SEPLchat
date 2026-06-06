@@ -70,14 +70,56 @@
             height: 100vh;
             display: grid;
             grid-template-columns: 320px minmax(0, 1fr);
+            grid-template-rows: auto 1fr;
+            grid-template-areas:
+                "header header"
+                "sidebar main";
+            overflow: hidden;
         }
 
-        .header,
+        .app-header,
         .chat-window,
         .composer {
             background: var(--panel);
             border: 1px solid var(--line);
             box-shadow: var(--shadow);
+        }
+
+        .app-header {
+            grid-area: header;
+            border-radius: 22px;
+            padding: 16px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            margin: 18px 18px 14px 18px;
+            min-width: 0;
+        }
+
+        .app-header .brand-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .app-header .logo {
+            width: 46px;
+            height: 46px;
+            border-radius: 16px;
+            display: grid;
+            place-items: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.95rem;
+            background: linear-gradient(135deg, var(--green), var(--green-dark));
+            flex: 0 0 auto;
+        }
+
+        .app-header h1 {
+            margin: 0;
+            font-size: 1.15rem;
+            color: var(--text);
         }
 
         .avatar {
@@ -94,28 +136,20 @@
         }
 
         .main {
-            padding: 18px;
+            grid-area: main;
+            padding: 0 18px 18px 18px;
             display: grid;
             gap: 14px;
             min-width: 0;
             min-height: 0;
-            height: 100vh;
-            grid-template-rows: auto 1fr auto;
+            height: 100%;
+            overflow: hidden;
+            grid-template-rows: 1fr auto;
         }
 
-        .header,
         .composer,
         .chat-window {
             border-radius: 22px;
-        }
-
-        .header {
-            padding: 16px 18px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 14px;
-            width: 100%;
         }
 
         .room-actions {
@@ -275,6 +309,7 @@
             grid-template-columns: auto 1fr auto;
             gap: 10px;
             align-items: center;
+            flex-shrink: 0;
         }
 
         .composer .avatar {
@@ -559,6 +594,28 @@
         @media (max-width: 980px) {
             .app {
                 grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr;
+                grid-template-areas:
+                    "header"
+                    "sidebar";
+            }
+
+            .main {
+                display: none;
+            }
+
+            .app.chat-open {
+                grid-template-areas:
+                    "header"
+                    "main";
+            }
+
+            .app.chat-open .sidebar {
+                display: none;
+            }
+
+            .app.chat-open .main {
+                display: grid;
             }
         }
 
@@ -568,9 +625,8 @@
                 padding: 12px;
             }
 
-            .header {
-                display: flex;
-                justify-content: flex-end;
+            .app-header {
+                margin: 12px 12px 14px 12px;
             }
 
             .room-actions {
@@ -640,6 +696,7 @@ $(document).ready(function()
         ?>
         $('#conversationHeader').removeClass("hidden");
         $("#messageForm").removeClass("hidden");
+        $("#app").addClass("chat-open");
         <?php
     }
     ?>
@@ -654,6 +711,7 @@ $(document).ready(function()
             let receiver_name=$(this).data("name");
             $("#conversationHeader").removeClass("hidden");
             $("#messageForm").removeClass("hidden");
+            $("#app").addClass("chat-open");
             $("#convAvatar").text(receiver_name.charAt(0).toUpperCase());
             $("#convTitle").text(receiver_name);
             $(".private-chat").removeClass("active");
@@ -687,7 +745,8 @@ $(document).ready(function()
             let groups_id=$(this).data("group-id");
             let group_name=$(this).data("name");
             $("#conversationHeader").removeClass("hidden");
-             $("#messageForm").removeClass("hidden");
+            $("#messageForm").removeClass("hidden");
+            $("#app").addClass("chat-open");
             $("#convAvatar").text(group_name.charAt(0).toUpperCase());
             $("#convTitle").text(group_name);
             $(".group-chat").removeClass("active");
@@ -850,6 +909,7 @@ $(document).on("click","#closeConversation",function()
         {
             $("#conversationHeader").addClass("hidden");
             $("#messageForm").addClass("hidden");
+            $("#app").removeClass("chat-open");
             $(".private-chat, .group-chat").removeClass("active");
             loadMessages();
             $.ajax({
@@ -872,18 +932,24 @@ $(document).on("click","#groupModal",function(e)
 });
 </script>
 <body>
-    <div class="app">
+    <div class="app<?php echo ($receiver_id!="" || $groups_id!="") ? ' chat-open' : ''; ?>" id="app">
+        <header class="app-header">
+            <div class="brand-row">
+                <div class="logo">SC</div>
+                <div>
+                    <h1>SEPL Chat</h1>
+                </div>
+            </div>
+            <div class="room-actions">
+                <div class="chip user-chip">
+                    <div class="avatar"><?php echo $currentInitial; ?></div>
+                    <strong><?php echo $current_username; ?></strong>
+                </div>
+                <a class="chip primary" href="logout.php">Logout</a>
+            </div>
+        </header>
         <?php include 'sidebar.php'; ?>
         <main class="main">
-            <header class="header">
-                <div class="room-actions">
-                    <div class="chip user-chip">
-                        <div class="avatar"><?php echo $currentInitial; ?></div>
-                        <strong><?php echo $current_username; ?></strong>
-                    </div>
-                    <a class="chip primary" href="logout.php">Logout</a>
-                </div>
-            </header>
             <section class="chat-window">
                 <div class="chat-info hidden" id="conversationHeader">
                     <div class="avatar" id="convAvatar">

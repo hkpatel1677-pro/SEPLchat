@@ -1,10 +1,12 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <style>
     .sidebar {
-        padding: 18px;
+        grid-area: sidebar;
+        padding: 0 18px 84px 18px;
         border-right: 1px solid rgba(21, 35, 28, 0.08);
         position: relative;
-        padding-bottom: 84px;
+        min-height: 0;
+        overflow-y: auto;
     }
 
     .sidebar #createGroupBtn {
@@ -25,44 +27,9 @@
         z-index: 2;
     }
 
-    .sidebar .brand,
     .sidebar .chat-list {
         background: rgba(255, 255, 255, 0.92);
         border: 1px solid rgba(21, 35, 28, 0.08);
-    }
-
-    .sidebar .brand {
-        border-radius: 22px;
-        padding: 16px;
-        margin-bottom: 14px;
-    }
-
-    .sidebar .brand-row {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .sidebar .logo {
-        width: 46px;
-        height: 46px;
-        border-radius: 16px;
-        display: grid;
-        place-items: center;
-        color: #fff;
-        font-weight: 700;
-        font-size: 0.95rem;
-        background: linear-gradient(135deg, #6b8f5a, #4f7a68);
-        flex: 0 0 auto;
-    }
-
-    .sidebar h1 {
-        margin: 0;
-        font-size: 1.15rem;
-        color: #15231c;
-    }
-
-    .sidebar .chat-list {
         border-radius: 22px;
         padding: 10px;
         display: grid;
@@ -187,20 +154,12 @@
             padding: 12px;
         }
     }
+
 </style>
 <aside class="sidebar">
     <div id="createGroupBtn">
         +
     </div>
-    <div class="brand">
-        <div class="brand-row">
-            <div class="logo">SC</div>
-            <div>
-                <h1>SEPL Chat</h1>
-            </div>
-        </div>
-    </div>
-
     <form class="search" method="POST" onsubmit="return false;">
         <i class="fa-solid fa-magnifying-glass search-icon" aria-hidden="true"></i>
         <input type="text" name="q" placeholder="Search chats" aria-label="Search chats">
